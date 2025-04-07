@@ -35,7 +35,7 @@ Depending on which IDE you are using, there may be no straightforward way to upl
 
 Once all this is done, the gizmo should work <A HREF=XIAOGPT.mov>something like this</a>.
 
-And, just to finish the project off, I soldered together the components rather than using the breadboard, attached a battery and on/off switch to the pads on the back of the XIAO ESP32S3, and put the whole thing in a box.
+And, just to finish the project off, I soldered together the components rather than using a breadboard, attached a battery and on/off switch to the pads on the back of the XIAO ESP32S3, and put the whole thing in a box.
 
 <img src=XIAOGPTbox.jpeg align=left width=300>
 
