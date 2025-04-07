@@ -13,11 +13,11 @@ So, the hardware required for this stripped-down version is just:
 </ul>
 This should all fit on a mini breadboard (<A href=XIAOGPT.fzz>here's the Frizing file</A>):
 
-<img src=ESPGPTfritzing.jpg width=500>
+<img src=XIAOGPTfritzing.jpg width=500>
 
 and physically -end up looking something like this:
 
-<img src="XIAOGPTimage.jpg" width=500>
+<img src="XIAOGPTimage.jpeg" width=500>
 
 
 To get this to work, you need to have an <A href= https://platform.openai.com/account/>OpenAI account</a>, to set up a form of payment in the <A href=https://platform.openai.com/settings/organization/billing/overview> "Billing" section</a> and prepay for some API credits (NB. NOT FREE! But it shouldn't cost much to run this small project -- all the playing around in development has only cost me around $10. And you can set limits in the <A href=https://platform.openai.com/settings/organization/limits>"Limits" section</a> to ensure that you do not spend more than you want).  You can then create an API key <A href=https://platform.openai.com/api-keys>here</a>, which you will need to paste into <A href=ESPGPTcode.ino>the code</a>, along with your WIFI credentials.
