@@ -19,7 +19,7 @@ and physically end up looking something like this (with a 10p for scale):
 
 <img src="XIAOGPTimage.jpeg" width=300>
 
-<A HREF=XIAOGPTdist.ino>The code to make all of this work</a> calls APIs from both OpenAI (for speech-to-text and ChatGPT) and ElevenLabs (with whom I generated a clone of my voice for the text-to-speech implementation, so I could the project pretend to be me.  If you want to keep things simpler and don't want to use a voice clone, check out the code for the <A href=https://github.com/astromikemerri/ESPGPT>original project</a>, which just uses the generic OpenAI TTS, so no need to sign up with ElevenLabs. Note that to use these APIs, you need access to both OpenAI and ElevenLabs, WHICH MAY COST MONEY.  Information on the cost of these services is available for both <A href=https://openai.com/api/pricing/>OpenAI</a> and <a href=https://elevenlabs.io/pricing>ElevenLabs</a>
+<A HREF=XIAOGPTdist.ino>The code to make all of this work</a> calls APIs from both OpenAI (for speech-to-text and ChatGPT) and ElevenLabs (with whom I generated a clone of my voice for the text-to-speech implementation, so I could the project pretend to be me.  If you want to keep things simpler and don't want to use a voice clone, check out the code for the <A href=https://github.com/astromikemerri/ESPGPT>original project</a>, which just uses the generic OpenAI TTS, so no need to sign up with ElevenLabs. Note that to use these APIs, you need access to both OpenAI and ElevenLabs, <b>WHICH MAY COST MONEY</b>.  Information on the cost of these services is available for both <A href=https://openai.com/api/pricing/>OpenAI</a> and <a href=https://elevenlabs.io/pricing>ElevenLabs</a>.
 
 Since my ambition here was to try and make this gizmo pretend to be me, I also added in a simple RAG (retrievale-augmented gerneration) layer to the call to ChatGPT, which searches a biographical database for keywords, and prepends any biographical information retrieved to the ChatGPT call.  the database is a simple text file called "bio.txt" that you upload to the SPIFFS file system before running the main code.  the file format is simply the keywords you want and the associated biographical facts, separated by a colon, so as much information as you want arranged like this:
 
@@ -35,8 +35,8 @@ Depending on which IDE you are using, there may be no simple way to upload this 
 
 Once all this is done, the whole project should work <A HREF=copy_387E2F5A-C60A-4D04-991E-86383E9506CF.mov>something like this</a>
 
-It is worth noting that, in addition to providing the engine that makes this gizmo work, ChatGPT was also responsible for coming up with many of the ideas (like using a RAG layer to provide biographical details), producing most of the code (which is why it is functional rather than beautiful!), and even for generating <A href=XIAOGPT.stl>the CAD  model</a> from which I 3D printed a box to put a final version inside:
+It is worth noting that, in addition to providing the engine that makes this gizmo work, ChatGPT was also responsible for coming up with many of the ideas (like using a RAG layer to provide biographical details, and how to upload the file), producing most of the code (which is why it is functional rather than beautiful!), and even for generating <A href=XIAOGPT.stl>the CAD  model</a> from which I 3D printed a box to put a final version inside:
 
 <img src=IMG_2884.jpeg width=300>
 
-It is an indication of what someone with even my limited technical skills can achieve with the assistance of an LLM.
+It is an indication of what someone with even my limited technical skills can achieve with the assistance of an LLM!
