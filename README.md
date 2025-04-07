@@ -15,7 +15,7 @@ This should all just fit on a mini breadboard (<A href=XIAOGPT.fzz>here's the Fr
 <p></p>
 <img src=XIAOGPTfritzing.jpg width=500>
 
-and physically end up looking something like this (with a 10p for scale):
+andend up looking something like this (with a 10p for scale):
 
 <img src="XIAOGPTimage.jpeg" width=500>
 
