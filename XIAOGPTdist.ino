@@ -20,7 +20,7 @@ const char *bioFilePath = "/bio.txt";  // Use "/bio.json" if using JSON
 // Wi-Fi, OpenAI and ElevenLabs credentials
 // -----------------------------------------------------------------------------
 
-// You need to edit these four lines with your own credentials
+// You need to edit these five lines with your own credentials
 #define WIFI_SSID     "YOUR WIFI SSID"
 #define WIFI_PASSWORD "YOUR WIFI PASSWORD"
 const char* openai_api_key  = "YOUR OPENAI API KEY";
