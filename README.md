@@ -33,12 +33,12 @@ hobbies, pastimes, fantasies, fantasy: you enjoy stamp collecting, and making up
 
 Depending on which IDE you are using, there may be no straightforward way to upload this file to SPIFFS.  <A href=UploadBio.ino>Here</a> is a sketch that uses the ESP32's ability to host a web server, as a simple way to do so.  Connect your PC's WiFi to ESP32_AP (password 12345678), open a web browser to 192.168.4.1, select and upload the file called "bio.txt".
 
-Once all this is done, the whole project should work <A HREF=XIAOGPT.mov>something like this</a>.
+Once all this is done, the gizmo should work <A HREF=XIAOGPT.mov>something like this</a>.
 
-And, just to finish the project off, I attached a battery and on/off switch to the pads on the back of the XIAO ESP32S3, and put the whoke thing in a box.
+And, just to finish the project off, I attached a battery and on/off switch to the pads on the back of the XIAO ESP32S3, and put the whole thing in a box.
 
 <img src=XIAOGPTbox.jpeg align=left width=300>
 
-It is worth noting that, in addition to providing the engine that makes this gizmo work, ChatGPT was also responsible for coming up with many of the ideas (like using a RAG layer to provide biographical details, and how to upload the file), producing most of the code (which is why it is functional rather than beautiful!), and even for generating <A href=XIAOGPT.stl>the CAD  model</a> from which I 3D printed a box to put a final version inside.
+It is worth noting that, in addition to providing the engine that makes this gizmo work, ChatGPT was also responsible for coming up with many of the ideas (like using a RAG layer to provide biographical details, and how to upload the file), producing most of the code (which is why it is functional rather than beautiful!), and even for generating <A href=XIAOGPT.stl>the CAD  model</a> from which I 3D printed the box to put a final version inside.
 
 It is an indication of what someone with even my limited technical skills can achieve with the assistance of an LLM!
