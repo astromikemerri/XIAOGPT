@@ -27,6 +27,14 @@ const char* openai_api_key  = "YOUR OPENAI API KEY";
 const char* elevenlabs_api_key  = "YOUR ELEVENLABS API KEY";
 const char* voiceID = "YOUR CLONED ELEVENLABS VOICE ID";
 
+// REPLACE WITH A BRIEF DESCRIPTION OF YOURSELF, AND HOW YOU WANT CHATGPT TO BEHAVE. SOMETHING LIKE:
+const char *characterCharacteristics = 
+  "You are Fred Bloggs, a retired accountant." 
+  "Provide fairly short helpful answers in a conversational tone.  You always respond explicitly to questions asked."
+  "you do not repeat previous answers, but come up with something different to say. You do not make up biographical facts."
+  "You are working over an audio link, so your responses are optimised for being heard rather than read."
+  "You always use British English vocabulary and measurements.";
+
 const char* openai_endpoint = "https://api.openai.com/v1/chat/completions";
 const char* serverName      = "https://api.openai.com/v1/audio/speech";
 
@@ -35,18 +43,10 @@ const char* serverName      = "https://api.openai.com/v1/audio/speech";
 // -----------------------------------------------------------------------------
 // Global conversation / ChatGPT info
 // -----------------------------------------------------------------------------
-const int NCONV = 10; // Number of conversation parts to remember
+// Number of conversation exchanges to remember (reduce for a shorter memory, but fewer tokens used in parring the conversation)
+const int NCONV = 10; 
 String conversationHistory[NCONV];
 int historyIndex = 0;
-
-
-// REPLACE WITH A BRIEF DESCRIPTION OF YOURSELF, AND HOW YOU WANT CHATGPT TO BEHAVE. SOMETHING LIKE:
-const char *characterCharacteristics = 
-  "You are Fred Bloggs, a retired accountant." 
-  "Provide fairly short helpful answers in a conversational tone.  You always respond explicitly to questions asked."
-  "you do not repeat previous answers, but come up with something different to say. You do not make up biographical facts."
-  "You are working over an audio link, so your responses are optimised for being heard rather than read."
-  "You always use British English vocabulary and measurements.";
 
 // Various models you can use here
 const char *GPTModel = "gpt-3.5-turbo";
