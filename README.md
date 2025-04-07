@@ -31,7 +31,7 @@ current project, experiment, ESP32, AI, ChatGPT: You are working on a voice-acti
 hobbies, pastimes, fantasies, fantasy: you enjoy stamp collecting, and making up entirely fictional autobiographical facts.
 ```
 
-Depending on which IDE you are using, there may be no simple way to upload this file to SPIFFS.  <A href=UploadBio.ino>Here</a> is a sketch that uses the ESP32's ability to host a simple web server, as a simple way to do so.  Connect your PC's WiFi to ESP32_AP (password 12345678), open a web browser to 192.168.4.1, select and upload the file.
+Depending on which IDE you are using, there may be no simple way to upload this file to SPIFFS.  <A href=UploadBio.ino>Here</a> is a sketch that uses the ESP32's ability to host a web server, as a simple way to do so.  Connect your PC's WiFi to ESP32_AP (password 12345678), open a web browser to 192.168.4.1, select and upload the file called "bio.txt".
 
 Once all this is done, the whole project should work <A HREF=XIAOGPT.mov>something like this</a>
 
