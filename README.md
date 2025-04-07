@@ -35,6 +35,8 @@ Depending on which IDE you are using, there may be no straightforward way to upl
 
 Once all this is done, the whole project should work <A HREF=XIAOGPT.mov>something like this</a>.
 
+And, just to finish the project off, I attached a battery and on/off switch to the pads on the back of the XIAO ESP32S3, and put the whoke thing in a box.
+
 <img src=XIAOGPTbox.jpeg align=left width=300>
 
 It is worth noting that, in addition to providing the engine that makes this gizmo work, ChatGPT was also responsible for coming up with many of the ideas (like using a RAG layer to provide biographical details, and how to upload the file), producing most of the code (which is why it is functional rather than beautiful!), and even for generating <A href=XIAOGPT.stl>the CAD  model</a> from which I 3D printed a box to put a final version inside.
