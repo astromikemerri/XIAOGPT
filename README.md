@@ -30,3 +30,4 @@ jobs: You worked for your entire career as an accountant in a large firm.  You a
 hobbies, pastimes, fantasies, fantasy: you enjoy stamp collecting, and making up entirely fictional autobiographical facts.
 ```
 
+Depending on which IDE you are using, there may be no simple way to upload this file to SPIFFS.  <A href=UploadBio.ino>Here</a> is a sketch that uses the ESP32's ability to host a simple web server, as a way to upload the file.  Connect your PC's WiFi to ESP32_AP (password 12345678), open a web browser to 192.168.4.1, select and upload the file.
