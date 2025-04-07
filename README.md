@@ -15,19 +15,9 @@ This should all fit on a mini breadboard (<A href=XIAOGPT.fzz>here's the Frizing
 
 <img src=XIAOGPTfritzing.jpg width=500>
 
-and physically -end up looking something like this:
+and physically end up looking something like this (with a 10p for scale):
 
 <img src="XIAOGPTimage.jpeg" width=500>
 
+<A HREF=XIAOGPTdist.ino>The code to make all of this work</a> calls APIs from both OpenAI (for speech-to-text and ChatGPT) and ElevenLabs (with whom I generated a clone of my voice for the text-to-speech implementation, so I could the project pretend to be me.  If you want to keep things simpler and don't want to use a voice clone, check out the code for the <A href=https://github.com/astromikemerri/ESPGPT>original procet, which just uses the generic OpenAI TTS, so no need to sign up with ElevenLabs. Note that to use these APIs, you need saccess to both OpenAI and ElevenLabs, WHICH MAY COST MONEY.  Information on the cost of these services is available for both <A href=https://openai.com/api/pricing/>OpenAI</a> and <a href=https://elevenlabs.io/pricing>ElevenLabs</a>
 
-To get this to work, you need to have an <A href= https://platform.openai.com/account/>OpenAI account</a>, to set up a form of payment in the <A href=https://platform.openai.com/settings/organization/billing/overview> "Billing" section</a> and prepay for some API credits (NB. NOT FREE! But it shouldn't cost much to run this small project -- all the playing around in development has only cost me around $10. And you can set limits in the <A href=https://platform.openai.com/settings/organization/limits>"Limits" section</a> to ensure that you do not spend more than you want).  You can then create an API key <A href=https://platform.openai.com/api-keys>here</a>, which you will need to paste into <A href=ESPGPTcode.ino>the code</a>, along with your WIFI credentials.
-
-The libraries in the code are all fairly standard and easy to find and install; the audio library I used is https://github.com/earlephilhower/ESP8266Audio.
-
-If all goes to plan, you should end up being able to hold a conversation <A href=ESPGPT.mov>like this</a>. You can also see the dialogue on the serial monitor, if the ESP32 is connected to your computer.
-
-You can ring the changes on which spoken voice you use, which ChatGPT model, its "temperature" (ie, how random its answers are) and the NCONV parameter, which specifies how long a conversation the code remembers.
-
-Also, feel free to play around with your own version of the code.  For example, <A href="ESPGPTvoice.ino">here</a> is a draft that I am currently tinkering with where the conversation is voice-activated, triggered by the volume level that the microphone picks up.  Presses of the button just pause and resume the conversation. If you find the sound triggering isn't working well, try pausing and resuming the conversation, as this also makes the code recalibrate the background noise level.
-
-Have fun!
