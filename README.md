@@ -9,7 +9,7 @@ So, the hardware required for this stripped-down version is just:
   <li> INMP441 I2S microphone</li>
   <li> Max98357 I2S audio amplifier breakout board</li>
   <li> 3W 8 ohm speaker</li>
-  <li> (and a suitable rechargeable battery like a 3.7V 300mAh 602030 Li-Po and an on-off sswitch if you want to create a stand-alone version) </li>
+  <li> (and a suitable rechargeable battery like a 3.7V 300mAh 602030 Li-Po and an on-off switch if you want to create a stand-alone device) </li>
 </ul>
 This should all fit on a mini breadboard (<A href=XIAOGPT.fzz>here's the Frizing file</A>):
 
