@@ -35,6 +35,6 @@ Depending on which IDE you are using, there may be no simple way to upload this 
 
 Once all this is done, the whole project should work <A HREF=copy_387E2F5A-C60A-4D04-991E-86383E9506CF.mov>something like this</a>
 
-It is worth noting that, in addition to providing the engine that makes this gizmo work, ChatGPT was also responsible for coming up with many of the ideas (like using a RAG layer to provide biographical details), producing most of the code (which is why it is functional rather than beautiful!), and even for generating CAD the model from which I 3D printed a box to put a final version inside:
+It is worth noting that, in addition to providing the engine that makes this gizmo work, ChatGPT was also responsible for coming up with many of the ideas (like using a RAG layer to provide biographical details), producing most of the code (which is why it is functional rather than beautiful!), and even for generating <A href=XIAOGPT.stl>the CAD  model</a> from which I 3D printed a box to put a final version inside:
 <img src=IMG_2884.jpeg width=300>
 It is an indication of what someone with even my limited technical skills can achieve with the assistance of an LLM.
