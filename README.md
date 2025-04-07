@@ -33,7 +33,7 @@ hobbies, pastimes, fantasies, fantasy: you enjoy stamp collecting, and making up
 
 Depending on which IDE you are using, there may be no straightforward way to upload this file to SPIFFS.  <A href=UploadBio.ino>Here</a> is a sketch that uses the ESP32's ability to host a web server, as a simple way to do so.  Connect your PC's WiFi to ESP32_AP (password 12345678), open a web browser to 192.168.4.1, select and upload the file called "bio.txt".
 
-Once all this is done, the gizmo should work <A HREF=XIAOGPT.mov>something like this</a>.
+Once all this is done, the gizmo should work <A HREF=XIAOGPT.mov>something like this</a>. We had a slightly longer chat <A HREF=https://youtu.be/_BVf_5BmFiE>here on YouTube</A>.
 
 And, just to finish the project off, I soldered together the components rather than using a breadboard, attached a battery and on/off switch to the pads on the back of the XIAO ESP32S3, and put the whole thing in a tiny box.
 
