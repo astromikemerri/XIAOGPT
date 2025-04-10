@@ -35,6 +35,8 @@ Depending on which IDE you are using, there may be no straightforward way to upl
 
 Once all this is done, the gizmo should work <A HREF=XIAOGPT.mov>something like this</a>. 
 
+<img src=XIAOGPTsolder.jpg align=left width=30%>
+
 <img src=XIAOGPTbox.jpeg align=left width=30%>
 
 And, just to finish the project off, I soldered together the components rather than using a breadboard, attached a battery and on/off switch to the pads on the back of the XIAO ESP32S3, and squeezed the whole thing into a tiny box.  You can listen in on a slightly longer chat that I had with this stand-alone boxed version of myself <A HREF=https://youtu.be/_BVf_5BmFiE>here on YouTube</A>.
