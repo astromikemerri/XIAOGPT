@@ -37,5 +37,7 @@ And, just to finish the project off, I soldered together the components rather t
 <BR><P></P>
 <img src=XIAOGPTbox.jpg align=left width=33%>
 It is worth noting that, in addition to providing the engine that makes this gizmo work, ChatGPT was also responsible for coming up with many of the ideas (like using a RAG layer to provide biographical details, and how to upload the biographical database file to SPIFFS), producing most of the code (which is why it is functional rather than beautiful!), and even for generating <A href=XIAOGPT.stl>the CAD  model</a> from which I 3D printed the box to put the final version inside.
+
 <BR><p></p>
+
 It is an indication of what someone with even my limited technical skills can achieve with the assistance of an LLM!
