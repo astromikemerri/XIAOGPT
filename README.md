@@ -14,7 +14,7 @@ So, the hardware required for this stripped-down version is just:
 This should all just fit on a mini breadboard (<A href=XIAOGPT.fzz>here's the Fritzing file</A>), and end up looking something like this (with a 10p for scale):
 <p></p>
 <p>
-<img src=XIAOGPTfritzing.jpg width=53% align=left>  <img src="XIAOGPTimage.jpeg" width=41.5% align=right>
+<img src=XIAOGPTfritzing.jpg width=53% align=left>  <img src="XIAOGPTimage.jpeg" width=42% align=right>
 </p>
 
 <p> &nbsp </p>
