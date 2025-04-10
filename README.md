@@ -35,7 +35,7 @@ Once all this is done, the gizmo should work <A HREF=XIAOGPT.mov>something like 
 <img src=XIAOGPTsolder.jpg align=right width=33%>
 And, just to finish the project off, I soldered together the components rather than using a breadboard, attached a battery and on/off switch to the pads on the back of the XIAO ESP32S3, and squeezed the whole thing into a tiny box.  You can listen in on a slightly longer chat that I had with this stand-alone boxed version of myself <A HREF=https://youtu.be/_BVf_5BmFiE>here on YouTube</A>.
 <BR><P></P>
-<img src=XIAOGPTbox.jpeg align=left width=33%>
+<img src=XIAOGPTbox.jpg align=left width=33%>
 It is worth noting that, in addition to providing the engine that makes this gizmo work, ChatGPT was also responsible for coming up with many of the ideas (like using a RAG layer to provide biographical details, and how to upload the biographical database file to SPIFFS), producing most of the code (which is why it is functional rather than beautiful!), and even for generating <A href=XIAOGPT.stl>the CAD  model</a> from which I 3D printed the box to put the final version inside.
 
 It is an indication of what someone with even my limited technical skills can achieve with the assistance of an LLM!
