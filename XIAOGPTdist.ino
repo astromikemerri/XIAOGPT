@@ -1,5 +1,5 @@
 // Code to implement a voice-acitvated interface to ChatGPT, 
-// using ElevenLabs voice cloning and a biographical RAG layer to make the device pretend to be you!""
+// using ElevenLabs voice cloning and a biographical RAG layer to make the device pretend to be you!
 
 #include <Arduino.h>
 #include <driver/i2s.h>
@@ -20,20 +20,12 @@ const char *bioFilePath = "/bio.txt";  // Use "/bio.json" if using JSON
 // Wi-Fi, OpenAI and ElevenLabs credentials
 // -----------------------------------------------------------------------------
 
-// You need to edit these five lines with your own credentials
+// You need to edit these four lines with your own credentials
 #define WIFI_SSID     "YOUR WIFI SSID"
 #define WIFI_PASSWORD "YOUR WIFI PASSWORD"
 const char* openai_api_key  = "YOUR OPENAI API KEY";
 const char* elevenlabs_api_key  = "YOUR ELEVENLABS API KEY";
 const char* voiceID = "YOUR CLONED ELEVENLABS VOICE ID";
-
-// REPLACE WITH A BRIEF DESCRIPTION OF YOURSELF, AND HOW YOU WANT CHATGPT TO BEHAVE. SOMETHING LIKE:
-const char *characterCharacteristics = 
-  "You are Fred Bloggs, a retired accountant." 
-  "Provide fairly short helpful answers in a conversational tone.  You always respond explicitly to questions asked."
-  "you do not repeat previous answers, but come up with something different to say. You do not make up biographical facts."
-  "You are working over an audio link, so your responses are optimised for being heard rather than read."
-  "You always use British English vocabulary and measurements.";
 
 const char* openai_endpoint = "https://api.openai.com/v1/chat/completions";
 const char* serverName      = "https://api.openai.com/v1/audio/speech";
@@ -43,17 +35,23 @@ const char* serverName      = "https://api.openai.com/v1/audio/speech";
 // -----------------------------------------------------------------------------
 // Global conversation / ChatGPT info
 // -----------------------------------------------------------------------------
-// Number of conversation exchanges to remember (reduce for a shorter memory, but fewer tokens used in parring the conversation)
-const int NCONV = 10; 
+const int NCONV = 10; // Number of conversation parts to remember
 String conversationHistory[NCONV];
 int historyIndex = 0;
+
+
+// REPLACE WITH A BRIEF DESCRIPTION OF YOURSELF, AND HOW YOU WANT CHATGPT TO BEHAVE. SOMETHING LIKE:
+const char *characterCharacteristics = 
+  "You are Fred Bloggs, a retired accountant." 
+  "Provide fairly short helpful answers in a conversational tone.  You always respond explicitly to questions asked."
+  "you do not repeat previous answers, but come up with something different to say. You do not make up biographical facts."
+  "You are working over an audio link, so your responses are optimised for being heard rather than read."
+  "You always use British English vocabulary and measurements.";
 
 // Various models you can use here
 const char *GPTModel = "gpt-3.5-turbo";
 // Playing with this parameter alters how random ChatGPT's responses are
 const float temperature = 0.35;
-
-
 
 WiFiClientSecure client;
 HTTPClient http;
@@ -70,23 +68,19 @@ HTTPClient http;
 #define I2S_MIC_LRC   GPIO_NUM_5
 #define I2S_MIC_DOUT  GPIO_NUM_44
 
-// LED pin definition
-#define USER_LED_PIN 21
-
-
-// Audio definitions
+#define WAV_HEADER_SIZE 44
 #define SAMPLE_RATE 16000
 #define BUFFER_SIZE 1024
-#define AMPLIFY_FACTOR 8
+#define AMPLIFY_FACTOR 64
 #define QUERYFILENAME "/question.wav"
 #define RESPONSEFILENAME "/answer.pcm"
 
-// Some recording parameters that can be tweaked
-#define START_THRESHOLD 60
-#define STOP_THRESHOLD 50
+#define START_THRESHOLD 50
+#define STOP_THRESHOLD 40
 #define SILENCE_DURATION 2000
 #define BASELINE_SMOOTHING_FACTOR 0.97f
 #define BYTES_PER_SAMPLE 2
+#define USER_LED_PIN 21
 #define MIC_WARMUP_READS 100
 
 float baselineVolume;
@@ -106,8 +100,9 @@ void connectToWiFi() {
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   Serial.print("Connecting to Wi-Fi");
   while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
+    delay(800);
     Serial.print(".");
+    flashLED(1);
   }
   Serial.println("\nConnected to Wi-Fi.");
   wifiOn = true;
@@ -125,7 +120,7 @@ void disableWiFi(){
 
 
 // -----------------------------------------------------------------------------
-// flashLED() -- useful for letting the user know what stage audio processing is at
+// flashLED()
 // -----------------------------------------------------------------------------
 void flashLED(int nflash){
   for(int i=0; i<nflash; i++){
@@ -136,7 +131,6 @@ void flashLED(int nflash){
   }
 }
 
-// install the microphone on I2S
 void setupMicrophone() {
   i2s_driver_uninstall(I2S_MIC_PORT);
   delay(100);
@@ -176,7 +170,6 @@ void setupMicrophone() {
   Serial.println("Microphone warmup done.");
 }
 
-// Install the amplifier on I2S
 void setupSpeaker() {
   if (speakerInstalled) {
     i2s_driver_uninstall(I2S_SPK_PORT);
@@ -212,7 +205,6 @@ void setupSpeaker() {
   Serial.println("Speaker I2S Configured.");
 }
 
-// Write header file wot saved WAV audio
 void writeWAVHeader(File file, uint32_t dataSize) {
   uint32_t fileSize = 36 + dataSize;
   uint16_t audioFormat = 1;
@@ -239,7 +231,6 @@ void writeWAVHeader(File file, uint32_t dataSize) {
   file.write((uint8_t*)&dataSize, 4);
 }
 
-// Start recording audio
 void startRecording() {
   digitalWrite(USER_LED_PIN, HIGH);
   file = SPIFFS.open(QUERYFILENAME, "w+");
@@ -250,7 +241,6 @@ void startRecording() {
   Serial.println("Started recording.");
 }
 
-// Stop recording audio
 void stopRecording() {
   writeWAVHeader(file, totalBytes);
   file.close();
@@ -258,38 +248,50 @@ void stopRecording() {
   Serial.println("Stopped recording.");
 }
 
-// Monitor the microphone to check whether sound threshold has been exceeded and audio recording should start
-bool checkMicrophone() {
+
+// -----------------------------------------------------------------------------
+// Modified microphone check: Reads from the microphone and either (a) updates baseline
+// if not recording, and if threshold is exceeded, starts recording and writes the triggering buffer,
+// or (b) while recording, appends data and stops when enough silence is detected.
+// -----------------------------------------------------------------------------
+void checkMicrophoneAndRecord() {
     int16_t buffer[BUFFER_SIZE];
     size_t bytesRead = 0;
     int32_t sum = 0;
 
     esp_err_t result = i2s_read(I2S_MIC_PORT, buffer, sizeof(buffer), &bytesRead, 10);
-    if (result != ESP_OK || bytesRead == 0) return false;
+    if (result != ESP_OK || bytesRead == 0) return;
 
     int samples = bytesRead / BYTES_PER_SAMPLE;
-    if (samples == 0) return false;
+    if (samples == 0) return;
 
     for (int i = 0; i < samples; i++) {
         sum += abs(buffer[i]);
     }
     int average = sum / samples;
 
-    // Update baseline only if we're NOT recording 
-    // and the current level is still below the "start" threshold:
-    if (!recording && (average < START_THRESHOLD + baselineVolume)) {
-        baselineVolume = 
-            (baselineVolume * BASELINE_SMOOTHING_FACTOR) + 
-            (average * (1.0f - BASELINE_SMOOTHING_FACTOR));
-        //Serial.print("baseline volume now ");
-        //Serial.println(baselineVolume);
-    }
-
-    if (recording) {
+    if (!recording) {
+        // Update baseline when the sound is below the trigger threshold.
+        if (average < (START_THRESHOLD + baselineVolume)) {
+            baselineVolume = (baselineVolume * BASELINE_SMOOTHING_FACTOR) +
+                             (average * (1.0f - BASELINE_SMOOTHING_FACTOR));
+        }
+        // If the sound goes above the trigger level then start recording and
+        // immediately write the current (triggering) buffer.
+        if (average > (START_THRESHOLD + baselineVolume)) {
+            startRecording();
+            file.write((uint8_t*)buffer, bytesRead);
+            totalBytes += bytesRead;
+            Serial.println("Sound threshold exceeded: triggering pre-buffer saved.");
+        }
+    } else { // recording is true
+        // Append the current buffer to the recording.
         file.write((uint8_t*)buffer, bytesRead);
         totalBytes += bytesRead;
 
-        if (average < STOP_THRESHOLD + baselineVolume) {
+        // Check for silence. If the average falls below the (stop) threshold we start
+        // a timer, and if the silence lasts long enough, we end the recording.
+        if (average < (STOP_THRESHOLD + baselineVolume)) {
             if (silenceStartTime == 0) {
                 silenceStartTime = millis();
             } else if (millis() - silenceStartTime > SILENCE_DURATION) {
@@ -299,13 +301,8 @@ bool checkMicrophone() {
             silenceStartTime = 0;
         }
     }
-
-    // This return indicates whether we should start recording:
-    // if NOT recording and the signal is above (baseline + START_THRESHOLD).
-    return (!recording && average > START_THRESHOLD + baselineVolume);
 }
 
-// Play audio, whether a .WAV or a .PCM file
 void playAudioFile(const char* filename, float amplification) {
   // Determine the file extension
   const char* ext = strrchr(filename, '.');
@@ -356,7 +353,6 @@ void playAudioFile(const char* filename, float amplification) {
   playFile.close();
 }
 
-// Do an initial test to see what level of sound defines a baseline above which speech will be detected
 void measureAmbientNoise() {
   Serial.println("Measuring ambient noise...");
   setupMicrophone(); // sets up I2S & discards 100 reads
@@ -405,7 +401,7 @@ void measureAmbientNoise() {
 
 
 // -----------------------------------------------------------------------------
-// STTOpenAIAPI() -- call to OpenAI speech-to-text API
+// STTOpenAIAPI()
 // -----------------------------------------------------------------------------
 String STTOpenAIAPI(const char* filePath){
   if(WiFi.status()!=WL_CONNECTED){
@@ -501,7 +497,7 @@ String STTOpenAIAPI(const char* filePath){
 
 
 /**
- * Helper for searching biographical data to remove basic punctuation (e.g. . , ! ?) and lowercase the string.
+ * Helper to remove basic punctuation (e.g. . , ! ?) and lowercase the string.
  * Adjust for any additional punctuation or special characters you need to strip.
  */
 String normalizeString(const String& input) {
@@ -517,7 +513,6 @@ String normalizeString(const String& input) {
     return result;
 }
 
-// Function to search the biographical database text file for relevant facts
 String findRelevantBioFacts(String userInput) {
     File file = SPIFFS.open(bioFilePath);
     if (!file) {
@@ -567,7 +562,7 @@ String findRelevantBioFacts(String userInput) {
 
 
 
-// Function to prepend relevant biographical facts to user input, annd tell ChatGPT how to use them
+// Function to prepend relevant biographical facts to user input
 String prependBioToQuery(String userInput) {
     Serial.println("Checking biographical details...");
     String bioFacts = findRelevantBioFacts(userInput);
@@ -583,7 +578,7 @@ String prependBioToQuery(String userInput) {
 
 
 // -----------------------------------------------------------------------------
-// ChatGPTOpenAIAPI() -- Call to OpenAI API to access ChatGPT
+// ChatGPTOpenAIAPI()
 // -----------------------------------------------------------------------------
 String ChatGPTOpenAIAPI(String prompt){
   if(WiFi.status()!=WL_CONNECTED){
@@ -663,7 +658,7 @@ String ChatGPTOpenAIAPI(String prompt){
 }
 
 // -----------------------------------------------------------------------------
-// tidyStringForJSON() -- a function to clean up string to amke sure that all of the text is JSON compliant
+// tidyStringForJSON()
 // -----------------------------------------------------------------------------
 String tidyStringForJSON(String input) {
   String out;
@@ -775,9 +770,10 @@ String stripNonAscii(String input) {
 
 
 // -----------------------------------------------------------------------------
-// TTSElevenLabsAPI() -- call to ElevenLabs text-to-speech API
+// TTSElevenLabsAPI()
 // -----------------------------------------------------------------------------
 bool TTSElevenLabsAPI(String text) {
+  String voiceID = "PK8FeJai69lKQ0xompmO";  // Replace with your desired ElevenLabs voice ID
   String apiUrl = "https://api.elevenlabs.io/v1/text-to-speech/" + voiceID + "?output_format=pcm_16000";
 
   http.begin(client, apiUrl);
@@ -813,7 +809,7 @@ bool TTSElevenLabsAPI(String text) {
 
 
 // -----------------------------------------------------------------------------
-// printFormatted()  -- a function to forat output nicely when printing large blocks of text to the serial monitor
+// printFormatted()
 // -----------------------------------------------------------------------------
 void printFormatted(String input,int lineWidth){
   int len=input.length();
@@ -858,26 +854,22 @@ void setup() {
   pinMode(USER_LED_PIN, OUTPUT);
   digitalWrite(USER_LED_PIN, HIGH);
 
-//connect to WiFi
   connectToWiFi();
 
-// mount the file system
   if (!SPIFFS.begin(true)) {
     Serial.println("SPIFFS Mount Failed");
     return;
   }
   Serial.println("SPIFFS mounted");
 
-// measure background noise level
   measureAmbientNoise();
 
 
- // Generate initial polite greeting
+ // Quick test: greet politely
   String chatResponse=ChatGPTOpenAIAPI("Please say: Hello, is there something you'd like to talk about?");
   Serial.println("Response:");
   Serial.println(chatResponse);
 
-// and play it through speaker
   String cleanChatResponse=tidyStringForJSON(chatResponse);
   if(TTSElevenLabsAPI(cleanChatResponse)){
     playAudioFile(RESPONSEFILENAME, 6.);
@@ -886,10 +878,9 @@ void setup() {
   }
 
 
-// set up hardware
+
   setupMicrophone();
   setupSpeaker();
-// and switch on LED to confirm ready for voise input
   digitalWrite(USER_LED_PIN, LOW);
 }
 
@@ -899,16 +890,14 @@ void loop() {
   if (wifiOn) {
     disableWiFi();
   }
-  if (checkMicrophone()) {
-    startRecording();
-    digitalWrite(USER_LED_PIN, HIGH);
-  }
-
-// main loop to record audio, convert it to text, pass it to ChatGPT, and convert the response back into audio.
-// the dialog is reproduced on the serial monitor if you are connected to a computer. 
-// LED flashes tell you where you are in the sequence
+  // Instead of using the return value, simply read from the microphone which manages the recording state:
+  checkMicrophoneAndRecord();
 
   if (!recording && SPIFFS.exists(QUERYFILENAME)) {
+
+// Useful for debugging microphone and recordings
+//    setupSpeaker();
+//    playAudioFile(QUERYFILENAME, 32.);
 
     // Turn on WiFi when needed
     connectToWiFi();
@@ -930,7 +919,7 @@ void loop() {
     Serial.println(" ");
 
     flashLED(4);
-    // strip all non-basic ASCII, to help ElevenLabs with its pronunciation
+    // try stripping all non-basic ASCII, to see if that helps ElevenLabs with its pronunciation
     String cleanChatResponse = stripNonAscii(tidyStringForJSON(chatResponse));
     if(TTSElevenLabsAPI(cleanChatResponse)) {
       playAudioFile(RESPONSEFILENAME, 6.);
@@ -942,5 +931,8 @@ void loop() {
     flashLED(5);
     SPIFFS.remove(QUERYFILENAME);
     digitalWrite(USER_LED_PIN, LOW);
+
   }
 }
+
+
